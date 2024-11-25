@@ -12,7 +12,6 @@ export default function useMapColumnsTable(
   uploadColumns: UploadColumn[],
   templateColumns: TemplateColumn[] = [],
   columnsValues: { [uploadColumnIndex: number]: TemplateColumnMapping },
-  saveProperties?: boolean,
   isLoading?: boolean
 ) {
   const { t } = useTranslation();
@@ -45,34 +44,27 @@ export default function useMapColumnsTable(
 
       if (matchedSuggestedTemplateColumn && matchedSuggestedTemplateColumn.key) {
         usedTemplateColumns.add(matchedSuggestedTemplateColumn.key);
-        acc[uc.index] = { key: matchedSuggestedTemplateColumn.key, include: true };
+        acc[uc.index] = { key: matchedSuggestedTemplateColumn.key, include: true, originalName: uc.name };
         return acc;
       }
 
-      // const similarTemplateColumn = templateColumns?.find((tc) => {
-      //   if (tc.key && !usedTemplateColumns.has(tc.key) && checkSimilarity(tc.key, uc.name)) {
-      //     usedTemplateColumns.add(tc.key);
-      //     return true;
-      //   }
-      //   return false;
-      // });
+      const similarTemplateColumn = templateColumns?.find((tc) => {
+        if (tc.key && !usedTemplateColumns.has(tc.key) && checkSimilarity(tc.key, uc.name)) {
+          usedTemplateColumns.add(tc.key);
+          return true;
+        }
+        return false;
+      });
 
       acc[uc.index] = {
-        key: uc.name,
-        include: false,
-        selected: false,
+        key: similarTemplateColumn?.key || "",
+        include: !!similarTemplateColumn?.key,
+        selected: !!similarTemplateColumn?.key,
+        originalName: uc.name
       };
       return acc;
     }, initialObject);
   });
-
-  const [initialFormValues, setInitialFormValues] = useState<{ [key: number]: TemplateColumnMapping }>(values)
-
-  useEffect(() => {
-    if (Object.keys(initialFormValues).length === 0) {
-      setInitialFormValues(values)
-    }
-  }, [values]);
 
   const [selectedValues, setSelectedValues] = useState<{ key: string; selected: boolean | undefined }[]>(
     Object.values(values).map(({ key, selected }) => ({ key, selected }))
@@ -85,12 +77,7 @@ export default function useMapColumnsTable(
 
   const handleTemplateChange = (uploadColumnIndex: number, key: string) => {
     setValues((prev) => {
-      let templatesFields: {[p: number]: TemplateColumnMapping}
-      if (saveProperties && !key) {
-        templatesFields = { ...prev, [uploadColumnIndex]: { ...initialFormValues[uploadColumnIndex] } };
-      } else {
-        templatesFields = { ...prev, [uploadColumnIndex]: { ...prev[uploadColumnIndex], key: key, include: !!key, selected: !!key } };
-      }
+      const templatesFields = { ...prev, [uploadColumnIndex]: { ...prev[uploadColumnIndex], key: key, include: !!key, selected: !!key } };
       const templateFieldsObj = Object.values(templatesFields).map(({ key, selected }) => ({ key, selected }));
       setSelectedValues(templateFieldsObj);
       return templatesFields;
@@ -98,7 +85,7 @@ export default function useMapColumnsTable(
   };
 
   const handleUseChange = (id: number, value: boolean) => {
-    setValues((prev) => ({ ...prev, [id]: { ...prev[id], include: !!prev[id].key && value } }));
+    setValues((prev) => ({ ...prev, [id]: { ...prev[id], include: (!!prev[id].key || !!prev[id].originalName) && value } }));
   };
 
   const yourFileColumn = t("Your File Column");
@@ -145,7 +132,7 @@ export default function useMapColumnsTable(
           content: (
             <Checkbox
               checked={suggestion.include}
-              disabled={!suggestion.key || isLoading}
+              disabled={isLoading}
               onChange={(e) => handleUseChange(index, e.target.checked)}
             />
           ),

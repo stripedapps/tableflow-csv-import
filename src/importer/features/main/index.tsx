@@ -197,7 +197,6 @@ export default function Main(props: CSVImporterProps) {
             columnMapping={columnMapping}
             skipHeaderRowSelection={skipHeader}
             selectedHeaderRow={selectedHeaderRow}
-            saveProperties={saveProperties}
             onSuccess={(columnMapping) => {
               setIsSubmitting(true);
               setColumnMapping(columnMapping);
@@ -224,7 +223,7 @@ export default function Main(props: CSVImporterProps) {
                     if (!resultingRow.values["properties"]) {
                       resultingRow.values["properties"] = {};
                     }
-                    resultingRow.values["properties"][mapping.key] = value;
+                    resultingRow.values["properties"][mapping.originalName] = value;
                   }
                 });
                 mappedRows.push(resultingRow);

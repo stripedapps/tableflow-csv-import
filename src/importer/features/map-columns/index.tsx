@@ -14,7 +14,6 @@ export default function MapColumns({
   columnMapping,
   selectedHeaderRow,
   skipHeaderRowSelection,
-  saveProperties,
   onSuccess,
   onCancel,
   isSubmitting,
@@ -35,7 +34,7 @@ export default function MapColumns({
       sample_data,
     };
   });
-  const { rows, formValues } = useMapColumnsTable(uploadColumns, template.columns, columnMapping, saveProperties, isSubmitting);
+  const { rows, formValues } = useMapColumnsTable(uploadColumns, template.columns, columnMapping, isSubmitting);
   const [error, setError] = useState<string | null>(null);
 
   const verifyRequiredColumns = (template: Template, formValues: { [uploadColumnIndex: number]: TemplateColumnMapping }): boolean => {
