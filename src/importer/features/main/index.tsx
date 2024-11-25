@@ -200,7 +200,6 @@ export default function Main(props: CSVImporterProps) {
             onSuccess={(columnMapping) => {
               setIsSubmitting(true);
               setColumnMapping(columnMapping);
-              console.log(columnMapping)
 
               // TODO (client-sdk): Move this type, add other data attributes (i.e. column definitions), and move the data processing to a function
               type MappedRow = {
