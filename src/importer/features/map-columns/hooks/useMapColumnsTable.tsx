@@ -12,7 +12,8 @@ export default function useMapColumnsTable(
   uploadColumns: UploadColumn[],
   templateColumns: TemplateColumn[] = [],
   columnsValues: { [uploadColumnIndex: number]: TemplateColumnMapping },
-  isLoading?: boolean
+  isLoading?: boolean,
+  saveProperties?: boolean
 ) {
   const { t } = useTranslation();
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function useMapColumnsTable(
 
       if (matchedSuggestedTemplateColumn && matchedSuggestedTemplateColumn.key) {
         usedTemplateColumns.add(matchedSuggestedTemplateColumn.key);
-        acc[uc.index] = { key: matchedSuggestedTemplateColumn.key, include: true };
+        acc[uc.index] = { key: matchedSuggestedTemplateColumn.key, include: true, originalName: uc.name };
         return acc;
       }
 
@@ -60,6 +61,7 @@ export default function useMapColumnsTable(
         key: similarTemplateColumn?.key || "",
         include: !!similarTemplateColumn?.key,
         selected: !!similarTemplateColumn?.key,
+        originalName: uc.name
       };
       return acc;
     }, initialObject);
@@ -84,7 +86,7 @@ export default function useMapColumnsTable(
   };
 
   const handleUseChange = (id: number, value: boolean) => {
-    setValues((prev) => ({ ...prev, [id]: { ...prev[id], include: !!prev[id].key && value } }));
+    setValues((prev) => ({ ...prev, [id]: { ...prev[id], include: (!!prev[id].key || !!prev[id].originalName) && value } }));
   };
 
   const yourFileColumn = t("Your File Column");
@@ -131,7 +133,7 @@ export default function useMapColumnsTable(
           content: (
             <Checkbox
               checked={suggestion.include}
-              disabled={!suggestion.key || isLoading}
+              disabled={isLoading || (!suggestion.key && !saveProperties)}
               onChange={(e) => handleUseChange(index, e.target.checked)}
             />
           ),

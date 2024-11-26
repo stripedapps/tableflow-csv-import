@@ -29,6 +29,7 @@ export default function Main(props: CSVImporterProps) {
     customStyles,
     showDownloadTemplateButton,
     skipHeaderRowSelection,
+    saveProperties,
   } = props;
   const skipHeader = skipHeaderRowSelection ?? false;
 
@@ -203,7 +204,7 @@ export default function Main(props: CSVImporterProps) {
               // TODO (client-sdk): Move this type, add other data attributes (i.e. column definitions), and move the data processing to a function
               type MappedRow = {
                 index: number;
-                values: Record<string, number | string>;
+                values: Record<string, any>;
               };
               const startIndex = (selectedHeaderRow || 0) + 1;
 
@@ -215,8 +216,13 @@ export default function Main(props: CSVImporterProps) {
                 };
                 row.values.forEach((value: string, valueIndex: number) => {
                   const mapping = columnMapping[valueIndex];
-                  if (mapping && mapping.include) {
+                  if (mapping && mapping.include && mapping.selected) {
                     resultingRow.values[mapping.key] = value;
+                  } else if (mapping && mapping.include && !mapping.selected && saveProperties) {
+                    if (!resultingRow.values["properties"]) {
+                      resultingRow.values["properties"] = {};
+                    }
+                    resultingRow.values["properties"][mapping.originalName] = value;
                   }
                 });
                 mappedRows.push(resultingRow);
@@ -239,6 +245,7 @@ export default function Main(props: CSVImporterProps) {
               goNext();
             }}
             isSubmitting={isSubmitting}
+            saveProperties={saveProperties}
             onCancel={skipHeader ? reload : () => goBack(StepEnum.RowSelection)}
           />
         );

@@ -5,6 +5,7 @@ export type TemplateColumnMapping = {
   key: string;
   include: boolean;
   selected?: boolean;
+  originalName: string;
 };
 
 export type MapColumnsProps = {
@@ -16,4 +17,5 @@ export type MapColumnsProps = {
   onSuccess: (columnMapping: { [index: number]: TemplateColumnMapping }) => void;
   onCancel: () => void;
   isSubmitting: boolean;
+  saveProperties?: boolean;
 };
