@@ -245,6 +245,7 @@ export default function Main(props: CSVImporterProps) {
               goNext();
             }}
             isSubmitting={isSubmitting}
+            saveProperties={saveProperties}
             onCancel={skipHeader ? reload : () => goBack(StepEnum.RowSelection)}
           />
         );

@@ -17,6 +17,7 @@ export default function MapColumns({
   onSuccess,
   onCancel,
   isSubmitting,
+  saveProperties,
 }: MapColumnsProps) {
   if (data.rows.length === 0) {
     return null;
@@ -34,7 +35,7 @@ export default function MapColumns({
       sample_data,
     };
   });
-  const { rows, formValues } = useMapColumnsTable(uploadColumns, template.columns, columnMapping, isSubmitting);
+  const { rows, formValues } = useMapColumnsTable(uploadColumns, template.columns, columnMapping, isSubmitting, saveProperties);
   const [error, setError] = useState<string | null>(null);
 
   const verifyRequiredColumns = (template: Template, formValues: { [uploadColumnIndex: number]: TemplateColumnMapping }): boolean => {
@@ -69,6 +70,13 @@ export default function MapColumns({
 
   return (
     <div className={style.content}>
+      {
+        saveProperties &&
+        <div className={style.disclaimer}>
+          <span>*Please include all columns you wish to import.</span><br/>
+          <span> All included columns not mapped to a destination column will be saved as metadata.</span>
+        </div>
+      }
       <form onSubmit={onSubmit}>
         {data ? (
           <div className={style.tableWrapper}>

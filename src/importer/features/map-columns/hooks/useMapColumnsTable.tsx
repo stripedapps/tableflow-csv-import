@@ -12,7 +12,8 @@ export default function useMapColumnsTable(
   uploadColumns: UploadColumn[],
   templateColumns: TemplateColumn[] = [],
   columnsValues: { [uploadColumnIndex: number]: TemplateColumnMapping },
-  isLoading?: boolean
+  isLoading?: boolean,
+  saveProperties?: boolean
 ) {
   const { t } = useTranslation();
   useEffect(() => {
@@ -132,7 +133,7 @@ export default function useMapColumnsTable(
           content: (
             <Checkbox
               checked={suggestion.include}
-              disabled={isLoading}
+              disabled={isLoading || (!suggestion.key && !saveProperties)}
               onChange={(e) => handleUseChange(index, e.target.checked)}
             />
           ),

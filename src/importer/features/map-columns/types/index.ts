@@ -17,4 +17,5 @@ export type MapColumnsProps = {
   onSuccess: (columnMapping: { [index: number]: TemplateColumnMapping }) => void;
   onCancel: () => void;
   isSubmitting: boolean;
+  saveProperties?: boolean;
 };
