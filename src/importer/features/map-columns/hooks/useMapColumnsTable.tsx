@@ -79,6 +79,10 @@ export default function useMapColumnsTable(
   );
 
   const handleTemplateChange = (uploadColumnIndex: number, key: string) => {
+    if (!!key && values[uploadColumnIndex].include && !values[uploadColumnIndex].key) {
+      setNumberOfIncludes(numberOfIncludes - 1);
+    }
+
     setValues((prev) => {
       const templatesFields = { ...prev, [uploadColumnIndex]: { ...prev[uploadColumnIndex], key: key, include: !!key, selected: !!key } };
       const templateFieldsObj = Object.values(templatesFields).map(({ key, selected }) => ({ key, selected }));
