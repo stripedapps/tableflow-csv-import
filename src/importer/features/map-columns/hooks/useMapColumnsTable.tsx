@@ -36,6 +36,8 @@ export default function useMapColumnsTable(
     return templateColumn.suggested_mappings.some((suggestion) => suggestion.toLowerCase() === uploadColumnName.toLowerCase());
   };
 
+  const [numberOfIncludes, setNumberOfIncludes] = useState(0);
+
   const [values, setValues] = useState<{ [key: number]: TemplateColumnMapping }>(() => {
     const usedTemplateColumns = new Set<string>();
     const initialObject: { [key: number]: TemplateColumnMapping } = {};
@@ -87,6 +89,11 @@ export default function useMapColumnsTable(
 
   const handleUseChange = (id: number, value: boolean) => {
     setValues((prev) => ({ ...prev, [id]: { ...prev[id], include: (!!prev[id].key || !!prev[id].originalName) && value } }));
+    if (value && !values[id].key) {
+      setNumberOfIncludes(numberOfIncludes + 1)
+    } else if (!value && !values[id].key) {
+      setNumberOfIncludes(numberOfIncludes - 1)
+    }
   };
 
   const yourFileColumn = t("Your File Column");
@@ -133,7 +140,7 @@ export default function useMapColumnsTable(
           content: (
             <Checkbox
               checked={suggestion.include}
-              disabled={isLoading || (!suggestion.key && !saveProperties)}
+              disabled={isLoading || (!suggestion.key && !saveProperties) || (!suggestion.include && numberOfIncludes >= 20)}
               onChange={(e) => handleUseChange(index, e.target.checked)}
             />
           ),

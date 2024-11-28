@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@chakra-ui/button";
 import Errors from "../../components/Errors";
 import Table from "../../components/Table";
-import { Template, UploadColumn } from "../../types";
+import { Template, TemplateColumn, UploadColumn } from "../../types";
 import useMapColumnsTable from "./hooks/useMapColumnsTable";
 import { MapColumnsProps, TemplateColumnMapping } from "./types";
 import style from "./style/MapColumns.module.scss";
@@ -38,10 +38,10 @@ export default function MapColumns({
   const { rows, formValues } = useMapColumnsTable(uploadColumns, template.columns, columnMapping, isSubmitting, saveProperties);
   const [error, setError] = useState<string | null>(null);
 
-  const verifyRequiredColumns = (template: Template, formValues: { [uploadColumnIndex: number]: TemplateColumnMapping }): boolean => {
+  const verifyRequiredColumns = (template: Template, formValues: { [uploadColumnIndex: number]: TemplateColumnMapping }): TemplateColumn[] => {
     const requiredColumns = template.columns.filter((column: any) => column.required);
     const includedValues = Object.values(formValues).filter((value: any) => value.include);
-    return requiredColumns.every((requiredColumn: any) => includedValues.some((includedValue: any) => includedValue.key === requiredColumn.key));
+    return requiredColumns.filter((column: any) => includedValues.every((value: any) => value.key !== column.key));
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -59,9 +59,10 @@ export default function MapColumns({
       {}
     );
 
-    const isRequiredColumnsIncluded = verifyRequiredColumns(template, formValues);
-    if (!isRequiredColumnsIncluded) {
-      setError(t("Please include all required columns"));
+    const errorColumns = verifyRequiredColumns(template, formValues);
+    if (errorColumns.length > 0) {
+      const columnNames = errorColumns.map((column: any) => column.name);
+      setError(t("Please include all required columns: ") + columnNames.join(", "));
       return;
     }
 
@@ -70,14 +71,14 @@ export default function MapColumns({
 
   return (
     <div className={style.content}>
-      {
-        saveProperties &&
-        <div className={style.disclaimer}>
-          <span>*Please include all columns you wish to import.</span><br/>
-          <span> All included columns not mapped to a destination column will be saved as metadata.</span>
-        </div>
-      }
       <form onSubmit={onSubmit}>
+        {
+          saveProperties &&
+          <div className={style.disclaimer}>
+            <span>*Please include columns you wish to import.</span><br/>
+            <span> Included columns not mapped to a destination column (max. 20) will be saved as properties.</span>
+          </div>
+        }
         {data ? (
           <div className={style.tableWrapper}>
             <Table data={rows} background="dark" fixHeader columnWidths={["20%", "30%", "30%", "20%"]} columnAlignments={["", "", "", "center"]} />
