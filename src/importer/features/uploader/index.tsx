@@ -18,7 +18,11 @@ export default function Uploader({ template, skipHeaderRowSelection, onSuccess, 
 
   function downloadTemplate() {
     const { columns } = template;
-    const csvData = `${columns.map((obj) => obj.name).join(",")}`;
+    const headers = `${columns.map((obj) => obj.name).join(",")}`;
+
+    const exampleRow = columns.map((obj) => obj.example).join(",");
+
+    const csvData: string = `${headers}\n${exampleRow}`;
 
     const link = document.createElement("a");
     link.href = URL.createObjectURL(new Blob([csvData], { type: "text/csv" }));

@@ -78,9 +78,9 @@ const CSVImporter = forwardRef((importerProps: CSVImporterProps, forwardRef?: an
     }
   };
 
-  current?.addEventListener("cancel", () => {
-    modalOnCloseTriggered();
-  });
+  // current?.addEventListener("cancel", () => {
+  //   modalOnCloseTriggered();
+  // });
 
   const elementProps = {
     ref,
