@@ -1,6 +1,6 @@
 {
   "name": "@maple-billing/csv-import-react",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Open-source CSV and XLS/XLSX file importer for React and JavaScript",
   "main": "build/index.js",
   "module": "build/index.esm.js",
@@ -107,7 +107,7 @@
     "react-dropzone": "^14.2.3",
     "react-i18next": "^14.1.0",
     "react-icons": "^4.12.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "^4.4.7"
   },
   "type": "module"

@@ -42,7 +42,9 @@ export default function useMapColumnsTable(
     const usedTemplateColumns = new Set<string>();
     const initialObject: { [key: number]: TemplateColumnMapping } = {};
 
-    return uploadColumns.reduce((acc, uc) => {
+    let propertyColumns = 0;
+
+    const reducedColumns = uploadColumns.reduce((acc, uc) => {
       const matchedSuggestedTemplateColumn = templateColumns?.find((tc) => isSuggestedMapping(tc, uc.name));
 
       if (matchedSuggestedTemplateColumn && matchedSuggestedTemplateColumn.key) {
@@ -59,14 +61,23 @@ export default function useMapColumnsTable(
         return false;
       });
 
+      let defaultInclude = false;
+      if (!similarTemplateColumn?.key && propertyColumns < 20 && saveProperties) {
+        defaultInclude = true;
+        propertyColumns++;
+      }
+
       acc[uc.index] = {
         key: similarTemplateColumn?.key || "",
-        include: !!similarTemplateColumn?.key,
+        include: !!similarTemplateColumn?.key || defaultInclude,
         selected: !!similarTemplateColumn?.key,
         originalName: uc.name
       };
       return acc;
     }, initialObject);
+
+    setNumberOfIncludes(propertyColumns)
+    return reducedColumns
   });
 
   const [selectedValues, setSelectedValues] = useState<{ key: string; selected: boolean | undefined }[]>(
@@ -79,7 +90,7 @@ export default function useMapColumnsTable(
   );
 
   const handleTemplateChange = (uploadColumnIndex: number, key: string) => {
-    if (!!key && values[uploadColumnIndex].include && !values[uploadColumnIndex].key) {
+    if (values[uploadColumnIndex].include && !values[uploadColumnIndex].key) {
       setNumberOfIncludes(numberOfIncludes - 1);
     }
 
@@ -151,6 +162,6 @@ export default function useMapColumnsTable(
         },
       };
     });
-  }, [values, isLoading]);
+  }, [values, isLoading, numberOfIncludes]);
   return { rows, formValues: values };
 }
