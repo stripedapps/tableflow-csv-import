@@ -30,6 +30,7 @@ export default function Main(props: CSVImporterProps) {
     showDownloadTemplateButton,
     skipHeaderRowSelection,
     saveProperties,
+    modalTitle,
   } = props;
   const skipHeader = skipHeaderRowSelection ?? false;
 
@@ -258,6 +259,12 @@ export default function Main(props: CSVImporterProps) {
 
   return (
     <div className={style.wrapper}>
+      {
+        modalTitle &&
+        <div className={style.title}>
+          {modalTitle}
+        </div>
+      }
       <div>
         <Stepper {...stepper} />
       </div>

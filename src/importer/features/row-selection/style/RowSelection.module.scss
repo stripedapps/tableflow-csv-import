@@ -8,6 +8,13 @@
     height: 100%;
     gap: var(--m);
 
+    .disclaimer {
+      font-size: 90%;
+      color: #495057;
+      text-align: left;
+      font-weight: bolder;
+    }
+
     .tableWrapper {
       display: flex;
       overflow-y: auto;

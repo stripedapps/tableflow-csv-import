@@ -61,6 +61,9 @@ export default function RowSelection({ data, onSuccess, onCancel, selectedHeader
   return (
     <div className={style.content}>
       <form>
+        <div className={style.disclaimer}>
+          <span>*Some rows may not be shown below.</span>
+        </div>
         {data ? (
           <>
             {hasMultipleExcelSheets ? (
@@ -79,7 +82,8 @@ export default function RowSelection({ data, onSuccess, onCancel, selectedHeader
                 data={dataWithRadios || []}
                 heading={
                   <div className={style.headingCaption}>
-                    <Tooltip title={t("Select the row which contains the column headers")}>{t("Select Header Row")}</Tooltip>
+                    <Tooltip
+                      title={t("Select the row which contains the column headers")}>{t("Select Header Row")}</Tooltip>
                   </div>
                 }
                 keyAsId="index"

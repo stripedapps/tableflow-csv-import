@@ -1,4 +1,4 @@
-import { CSVImporter } from "csv-import-react";
+import { CSVImporter } from "@maple-billing/csv-import-react";
 import { useState } from "react";
 import "./App.css";
 
@@ -6,20 +6,34 @@ function App() {
   const template = {
     columns: [
       {
-        name: "First Name",
-        key: "first_name",
-        required: true,
-        description: "The first name of the user",
-        suggested_mappings: ["first", "mame"],
+        name: "Contact Name",
+        key: "name",
+        required: false,
       },
       {
-        name: "Last Name",
-        suggested_mappings: ["last"],
+        name: "Contact Email",
+        key: "email",
+        required: true,
       },
       {
-        name: "Email",
+        name: "Organization Name",
+        key: "organization_name",
+        required: false,
+      },
+      {
+        name: "External Identifier",
+        key: "external_identifier",
         required: true,
-        description: "The email of the user",
+      },
+      {
+        name: "Billing Emails",
+        key: "billing_emails",
+        required: false,
+      },
+      {
+        name: "Phone Number",
+        key: "phone_number",
+        required: false,
       },
     ],
   };
@@ -33,10 +47,13 @@ function App() {
       <CSVImporter
         isModal={true}
         modalIsOpen={isOpen}
-        darkMode={true}
+        darkMode={false}
         template={template}
         modalOnCloseTriggered={() => setIsOpen(false)}
         modalCloseOnOutsideClick={true}
+        saveProperties={true}
+        onComplete={(data) => {console.log(data)}}
+        modalTitle={"Event Import"}
       />
     </div>
   );
